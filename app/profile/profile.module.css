@@ -1,0 +1,35 @@
+.data__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px solid black;
+    border-radius: 6px;
+    max-width: fit-content;
+    margin: 15px;
+    padding: 10px;
+    background-color: #d7e4f5;
+}
+
+.data__part {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 5px;
+    border: 2px solid gray;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.profile-font {
+    font-size: 40px;
+}
+
+@media (width <= 768px) {
+    .profile-font {
+        font-size: 20px;
+    }
+    
+    .data__part {
+        flex-wrap: wrap;
+    }
+}
