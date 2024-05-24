@@ -6,11 +6,12 @@ export const useStore = create((set) => ({
   isAuth: false,
   user: null,
   token: null,
+  slider: true,
   login: (user, token) => {
     set({ isAuth: true, user: { ...user, id: user._id }, token: user.jwt });
     setJWT(token);
   },  
-  logout : () => {
+  logout: () => {
     set({isAuth: false, user: null, token: null});
     removeJWT();
   },
@@ -29,5 +30,8 @@ export const useStore = create((set) => ({
     } else {
       set({ isAuth: false, user: null, token: null });
     }
+  },
+  changeSlider: (state) => {
+    set({ slider: state});
   },
 }));

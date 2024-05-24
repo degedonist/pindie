@@ -13,7 +13,7 @@ export default function GamePage(props) {
 
   let [game, setGame] = useState(null);
   let [preloaderVisible, setPreloaderVisible] = useState(true);
-  const [isVoted, setIsVoted] = useState(false);
+  let [isVoted, setIsVoted] = useState(false);
   const store = useStore()
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function GamePage(props) {
   }, []);
 
 useEffect(() => {
-      store.user && game ? setIsVoted(checkIfUserVoted(game, store.user.id)) : setIsVoted(false);
+      store.user && game ? setIsVoted(checkIfUserVoted(game, store.user._id)) : setIsVoted(false);
   }, [store.user, game]); 
 
 
@@ -43,9 +43,9 @@ useEffect(() => {
   const handleVote = async () => {
       const jwt = store.token;
       let usersIdArray = game.users.length
-        ? game.users.map((user) => user.id)
+        ? game.users.map((user) => user._id)
       : [];
-      usersIdArray.push(store.user.id);
+      usersIdArray.push(store.user._id);
       const response = await vote(
         `${endpoints.games}/${game.id}`,
       jwt,
