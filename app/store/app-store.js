@@ -20,7 +20,6 @@ export const useStore = create((set) => ({
     if (jwt) {
       const user = await getMe(endpoints.me, jwt);
       if (user) {
-
         set({ isAuth: true, user, token: jwt });
         setJWT(jwt);
       } else {

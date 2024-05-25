@@ -11,9 +11,8 @@ export const getData = async (url) => {
     }
 };
 
-export const normalizeDataObject = (obj) => {
+const normalizeDataObject = (obj) => {
   let str = JSON.stringify(obj);
-  
   str = str.replaceAll('_id', 'id');
   const newObj = JSON.parse(str);
   const result = { ...newObj, category: newObj.categories };
@@ -27,13 +26,20 @@ export const normalizeData = (data) => {
 };
 
 export const getNormalizedGamesDataByCategory = async (url, category) => {
-  const data = await getData(`${url}?categories.name=${category}`);
-  return isResponseOk(data) ? normalizeData(data) : data;
+  try {
+    const data = await getData(`${url}?categories.name=${category}`)
+    if (!data.length) {
+      throw new Error('Нет игр в категории')
+    }
+    return isResponseOk(data) ? normalizeData(data) : data
+  } catch (error) {
+    return error
+  }
 };
 
 export const getNormalizedGameDataById = async (url, id) => {
-const data = await getData(`${url}/${id}`);
-return isResponseOk(data) ? normalizeDataObject(data) : data;
+  const data = await getData(`${url}/${id}`);
+  return isResponseOk(data) ? normalizeDataObject(data) : data;
 };
 
 export const isResponseOk = (response) => {
@@ -44,16 +50,16 @@ export const authorize = async (url, data) => {
   try {
     const response = await fetch(url, {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
     if (response.status !== 200) {
-      throw new Error('Ошибка получения данных')
+      throw new Error('Ошибка авторизации')
     }
-    const result = await response.json();
-    return result;
-  } catch(error) {
-    return error;
+    const result = await response.json()
+    return result
+  } catch (error) {
+    return error
   }
 };
 
@@ -84,7 +90,6 @@ export const getMe = async (url, jwt) => {
       throw new Error("Ошибка получения данных");
     }
     const result = await response.json();
-    console.log(result);
     return result;
   } catch (error) {
     return error;
@@ -92,15 +97,21 @@ export const getMe = async (url, jwt) => {
 };
 
 export const setJWT = (jwt) => {
-  localStorage.setItem("jwt", jwt);
+  document.cookie = `jwt=${jwt}`
+  localStorage.setItem('jwt', jwt)
 };
 
 export const getJWT = () => {
-    return localStorage.getItem("jwt");
+  if (document.cookie === '') {
+    return localStorage.getItem('jwt')
+  }
+  const jwt = document.cookie.split(';').find((item) => item.includes('jwt'))
+  return jwt ? jwt.split('=')[1] : null
 };
 
 export const removeJWT = () => {
-  localStorage.removeItem("jwt");
+  document.cookie = 'jwt=;'
+  localStorage.removeItem('jwt')
 };
 
 export const checkIfUserVoted = (game, userId) => {
@@ -111,9 +122,11 @@ export const vote = async (url, jwt, usersArray) => {
   try {
     const response = await fetch(url, {
       method: "PUT",
-      headers: { "Content-type" : 'application/json',
-                  Authorization: `Bearer ${jwt}`, },
-      body: JSON.stringify({ users: usersArray }),
+      headers: { 
+        "Content-type" : 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({ users_permissions_users: usersArray }),
     })
     if (response.status !== 200) {
       throw new Error("Ошибка голосования");
@@ -121,6 +134,6 @@ export const vote = async (url, jwt, usersArray) => {
     const result = await response.json();
     return result;
   } catch(error) {
-    return error;
+    return error
   };
 };
