@@ -1,1 +1,1 @@
-address: https://rambokabachok.nomoredomainswork.ru
+Frontend for Yandex Practicum course final project.
